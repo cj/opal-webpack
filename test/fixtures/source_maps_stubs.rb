@@ -1,3 +1,4 @@
+require 'opal'
 require 'dependency1'
 require 'dependency2'
 require 'dependency3'

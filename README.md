@@ -93,11 +93,14 @@ between invocations of webpack.
 }
 ```
 
+#### Opal version
+
+When you `require 'opal'` in any asset, this loader will use the version of Opal bundled with this tool.
+opal/mini, opal/full are not supported.
+
 #### OPAL_LOAD_PATH
 
 By passing `OPAL_LOAD_PATH` environment variable to webpack, the loader will correctly resolve file other than relative path.
-
-`opalrb-loader` is only bundled with compiler module. It left the decision on managing runtime, corelib or gems to developer.
 
 See the example [Rakefile](https://github.com/cj/opal-webpack/blob/master/examples/complex/Rakefile) for how to integrate using other Opal gems.
 

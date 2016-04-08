@@ -2,6 +2,7 @@
 
 const expect = require('chai').expect
 const transpile = require('../../lib/transpile')
+const path = require('path')
 
 describe('transpile', function(){
   const wpContext = {
@@ -25,11 +26,33 @@ describe('transpile', function(){
     expect(result).to.not.include('Opal.modules')
   })
 
+  it('passes bundled opal through', function() {
+    var result = doTranspile('the code',
+                             {},
+                             path.resolve(__dirname, '../../vendor/opal-compiler.js'),
+                             'opal-compiler.js')
+    expect(result).to.eq('process = undefined;\nthe code')
+  })
+
+  it('passes bundled opal through when forced on node', function() {
+    var result = doTranspile('the code',
+                             {forceNode: true},
+                             path.resolve(__dirname, '../../vendor/opal-compiler.js'),
+                             'opal-compiler.js')
+    expect(result).to.eq('process = global.process;\nthe code')
+  })
+
   describe('webpack requires', function() {
     it('standard', function() {
       var result = doTranspile('require "another_dependency"')
 
       expect(result).to.match(/require\('!!the_loader_path\?file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+    })
+
+    it('bundled opal', function() {
+      var result = doTranspile('require "opal"')
+
+      expect(result).to.match(/require\('!!the_loader_path\?file=opal&requirable=true!.*\/vendor\/opal-compiler.js'\);/)
     })
 
     it('node convention', function() {

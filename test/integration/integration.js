@@ -17,8 +17,9 @@ RegExp.escape = function(s) {
 }
 
 describe('integration', function(){
+  this.timeout(10000)
+
   const tmpDir = path.resolve(__dirname, '../../tmp')
-  const opalCompilerPath = path.resolve(__dirname, '../../vendor/opal-compiler.js')
   const outputBaseDir = path.resolve(tmpDir, 'output')
   const cacheDir = path.join(outputBaseDir, 'cache')
   const fixturesDir = path.resolve(__dirname, '../fixtures')
@@ -36,6 +37,9 @@ describe('integration', function(){
     },
     module: {
       loaders: [{ test: /\.rb$/, loader: opalLoader }]
+    },
+    opal: {
+      forceNode: true
     }
   }
 
@@ -71,7 +75,7 @@ describe('integration', function(){
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`node -r ${opalCompilerPath} ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    return execSync(`node ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -150,6 +154,7 @@ describe('integration', function(){
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_another_dep.js'),
       opal: {
+        forceNode: true,
         stubs: ['dependency']
       }
     })
@@ -179,6 +184,7 @@ describe('integration', function(){
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_nested_stub.js'),
       opal: {
+        forceNode: true,
         stubs: ['dependency']
       }
     })
@@ -294,8 +300,6 @@ describe('integration', function(){
   })
 
   it('outputs correct source maps', function (done) {
-    this.timeout(10000)
-
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_source_maps.js'),
       devtool: 'source-map'
@@ -318,12 +322,11 @@ describe('integration', function(){
   })
 
   it('outputs correct source maps when stubs are used', function (done) {
-    this.timeout(10000)
-
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_source_maps_stubs.js'),
       devtool: 'source-map',
       opal: {
+        forceNode: true,
         stubs: ['dependency1', 'dependency2', 'dependency3', 'dependency4']
       }
     })
@@ -337,8 +340,8 @@ describe('integration', function(){
         var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:7:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:11:1\)/)
         return done()
       })
     })
@@ -400,8 +403,6 @@ describe('integration', function(){
   })
 
   it('allows caching to a specific directory', function (done) {
-    this.timeout(5000)
-
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_basic.js'),
       module: {
@@ -421,7 +422,8 @@ describe('integration', function(){
       assertBasic(config, () => {
         fs.readdir(cacheDir, (err, files) => {
           expect(err).to.be.null
-          expect(files).to.have.length(1)
+          // 1 file + opal
+          expect(files).to.have.length(2)
           return done()
         })
       })
@@ -449,7 +451,8 @@ describe('integration', function(){
 
       fs.readdir(cacheDir, (err, files) => {
         expect(err).to.be.null
-        expect(files).to.have.length(3)
+        // 3 dependencies + opal
+        expect(files).to.have.length(4)
         return done()
       })
     })
