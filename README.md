@@ -13,8 +13,12 @@ Check out [this blog post](https://medium.com/@zetachang/from-sprockets-to-webpa
 ## Installation
 
 ```bash
-npm install opalrb-loader --save-dev
+npm install opal-webpack --save-dev
 ```
+## Requirements
+
+* Node/Webpack obviously
+* Opal 0.9.2 or 0.10 (see below for information on this)
 
 ## Usage
 
@@ -96,7 +100,7 @@ between invocations of webpack.
 #### Opal version
 
 When you `require 'opal'` in any asset, this loader will use the version of Opal bundled with this tool.
-opal/mini, opal/full are not supported.
+opal/mini, opal/full are not supported. Currently Opal 0.9.2 is bundled with the tool.
 
 #### OPAL_LOAD_PATH
 
