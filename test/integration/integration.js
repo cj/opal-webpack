@@ -400,6 +400,8 @@ describe('integration', function(){
   })
 
   it('allows caching to a specific directory', function (done) {
+    this.timeout(5000)
+
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_basic.js'),
       module: {
