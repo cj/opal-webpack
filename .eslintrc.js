@@ -1,7 +1,7 @@
 module.exports = {
     "rules": {
         "no-console": 0,
-        "indent": ["error", 2],
+        "indent": [2, 2],
         "quotes": [
             2,
             "single"
