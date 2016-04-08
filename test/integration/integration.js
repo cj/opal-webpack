@@ -18,6 +18,7 @@ RegExp.escape = function(s) {
 
 describe('integration', function(){
   const tmpDir = path.resolve(__dirname, '../../tmp')
+  const opalCompilerPath = path.resolve(__dirname, '../../vendor/opal-compiler.js')
   const outputBaseDir = path.resolve(tmpDir, 'output')
   const cacheDir = path.join(outputBaseDir, 'cache')
   const fixturesDir = path.resolve(__dirname, '../fixtures')
@@ -28,7 +29,6 @@ describe('integration', function(){
   const dependencyBackup = aFixture('dependency.rb.backup')
   const opalLoader = path.resolve(__dirname, '../../')
   const outputDir = path.resolve(outputBaseDir, 'loader')
-  const opalFilename = path.resolve(tmpDir, `opal-${opalVersion}.js`)
   const globalConfig = {
     output: {
       path: outputDir,
@@ -65,14 +65,13 @@ describe('integration', function(){
     })
   }
 
-  beforeEach(function() {
-    fsExtra.mkdirpSync('./tmp')
-    execSync(`ls ${opalFilename} 1>/dev/null 2>&1 || opal -c -e "require 'opal'" > ${opalFilename}`)
+  beforeEach(function(done) {
+    fsExtra.mkdirp('./tmp', done)
   })
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`node -r ${opalFilename} ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    return execSync(`node -r ${opalCompilerPath} ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -389,7 +388,13 @@ describe('integration', function(){
       expect(errors).to.have.length(1)
       let error = errors[0]
       expect(error).to.be.an.instanceof(Error)
-      expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
+      if (opalVersion.indexOf('0.9') != -1) {
+        expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
+      }
+      else {
+        // Opal 0.10 regression - https://github.com/opal/opal/pull/1426
+        expect(error.message).to.match(/Module build failed.*false/)
+      }
       return done()
     })
   })
