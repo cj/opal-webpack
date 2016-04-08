@@ -1,0 +1,27 @@
+language: ruby
+sudo: false
+
+cache:
+  bundler: true
+  directories:
+    - node_modules
+
+matrix:
+  fast_finish: true
+
+  include:
+    - rvm: 2.3.0
+      gemfile: gemfiles/opal_0.9.gemfile
+    - rvm: 2.3.0
+      gemfile: gemfiles/opal_master.gemfile
+
+before_install:
+  - "nvm install"
+  - "nvm use"
+  - "node -v"
+  - "npm install --no-bin-links"
+
+script:
+  - "npm run eslint"
+  - "npm run prepare"
+  - "npm run test"
