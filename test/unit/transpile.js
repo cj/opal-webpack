@@ -34,14 +34,6 @@ describe('transpile', function(){
     expect(result).to.eq('process = undefined;\nthe code')
   })
 
-  it('passes bundled opal through when forced on node', function() {
-    var result = doTranspile('the code',
-                             {forceNode: true},
-                             path.resolve(__dirname, '../../vendor/opal-compiler.js'),
-                             'opal-compiler.js')
-    expect(result).to.eq('process = global.process;\nthe code')
-  })
-
   describe('webpack requires', function() {
     it('standard', function() {
       var result = doTranspile('require "another_dependency"')

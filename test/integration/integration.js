@@ -37,9 +37,6 @@ describe('integration', function(){
     },
     module: {
       loaders: [{ test: /\.rb$/, loader: opalLoader }]
-    },
-    opal: {
-      forceNode: true
     }
   }
 
@@ -61,7 +58,7 @@ describe('integration', function(){
           expect(err).to.be.null
           expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('123\n')
+          expect(runCode()).to.eq('123\n\n')
 
           return done()
         })
@@ -75,7 +72,13 @@ describe('integration', function(){
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`node ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    return execSync(`phantomjs ${path.resolve(__dirname, '../support/runPhantom.js')} ${args} ${path.resolve(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+  }
+
+  // the source-map-support plugin that load_source_maps.js loads makes it easy to test this on node
+  function runSourceMapDependentCode() {
+    const sourceMapFinder = aFixture('load_source_maps.js')
+    return execSync(`node -r ${sourceMapFinder} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -116,7 +119,7 @@ describe('integration', function(){
           expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('123\nwe made it\n')
+          expect(runCode()).to.eq('123\n\nwe made it\n\n')
 
           return done()
         })
@@ -142,7 +145,7 @@ describe('integration', function(){
           expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('123\nwe made it\n')
+          expect(runCode()).to.eq('123\n\nwe made it\n\n')
 
           return done()
         })
@@ -154,7 +157,6 @@ describe('integration', function(){
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_another_dep.js'),
       opal: {
-        forceNode: true,
         stubs: ['dependency']
       }
     })
@@ -172,7 +174,7 @@ describe('integration', function(){
           expect(subject).to.not.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('we made it\n')
+          expect(runCode()).to.eq('we made it\n\n')
 
           return done()
         })
@@ -184,7 +186,6 @@ describe('integration', function(){
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_nested_stub.js'),
       opal: {
-        forceNode: true,
         stubs: ['dependency']
       }
     })
@@ -206,7 +207,7 @@ describe('integration', function(){
           expect(subject).to.include('Opal.modules["dependency"]')
           expect(subject).to.include('Opal.modules["another_dependency"]')
           expect(subject).to.include('Opal.modules["inside_load_path"]')
-          expect(runCode()).to.eq('we made it\n')
+          expect(runCode()).to.eq('we made it\n\n')
 
           return done()
         })
@@ -291,7 +292,7 @@ describe('integration', function(){
           // don't want paths hard coded to machines in here
           expect(subject).to.not.match(currentDirectoryExp)
           expect(subject).to.include('Opal.modules["tree/file1"]')
-          expect(runCode()).to.eq('inside the tree\n')
+          expect(runCode()).to.eq('inside the tree\n\n')
 
           return done()
         })
@@ -311,7 +312,7 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be.null
         expect(files).to.have.length(2)
-        var output = runCode('-r '+aFixture('load_source_maps.js'))
+        var output = runSourceMapDependentCode()
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
@@ -326,7 +327,6 @@ describe('integration', function(){
       entry: aFixture('entry_source_maps_stubs.js'),
       devtool: 'source-map',
       opal: {
-        forceNode: true,
         stubs: ['dependency1', 'dependency2', 'dependency3', 'dependency4']
       }
     })
@@ -337,7 +337,7 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be.null
         expect(files).to.have.length(2)
-        var output = runCode('-r '+aFixture('load_source_maps.js'))
+        var output = runSourceMapDependentCode()
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:7:1\)/)
@@ -374,7 +374,7 @@ describe('integration', function(){
 
           expect(err).to.be.null
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('[Object#onearg] wrong number of arguments(0 for 1)\n[Object#two_arg] wrong number of arguments(1 for 2)\n')
+          expect(runCode()).to.eq('[Object#onearg] wrong number of arguments(0 for 1)\n\n[Object#two_arg] wrong number of arguments(1 for 2)\n\n')
 
           return done()
         })
@@ -481,7 +481,7 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be.null
         expect(files).to.have.length(2)
-        var output = runCode('-r '+aFixture('load_source_maps.js'))
+        var output = runSourceMapDependentCode()
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
