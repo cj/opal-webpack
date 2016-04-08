@@ -20,6 +20,7 @@ module.exports = {
         "node": true
     },
     "globals": {
+        "phantom": true,
         "Opal": true,
         "describe": true,
         "it": true,
