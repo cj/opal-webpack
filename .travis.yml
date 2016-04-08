@@ -19,9 +19,9 @@ before_install:
   - "nvm install"
   - "nvm use"
   - "node -v"
-  - "npm install --no-bin-links"
+  - "npm install"
 
 script:
   - "npm run eslint"
-  - "npm run prepare"
-  - "npm run test"
+  - "bundle exec npm run prepare"
+  - "bundle exec npm run test"
