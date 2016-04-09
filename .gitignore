@@ -34,6 +34,7 @@ vendor/opal-compiler.js
 test/fixtures/*.backup
 /tmp
 /test-results.xml
+*.tmp
 
 # packed NPM packages
 /*.tgz
