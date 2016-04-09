@@ -33,7 +33,8 @@ describe('transpile', function(){
         const environment = Object.assign({
           OPAL_COMPILER_PATH: compilerAbsolutePath
         }, process.env)
-        exec(`node ${tmpPath}`, {
+        const nodeBinary = path.join(process.env.NVM_BIN, 'node')
+        exec(`${nodeBinary} ${tmpPath}`, {
           env: environment
         },
         function (err, stdout) {
