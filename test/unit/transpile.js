@@ -90,7 +90,7 @@ describe('transpile', function(){
     it('bundled opal', function() {
       var result = doTranspile('require "opal"')
 
-      expect(result).to.match(/require\('!!the_loader_path\?file=opal&requirable=true!.*\/vendor\/opal-compiler.js'\);/)
+      expect(result).to.match(/require\('!!the_loader_path\?file=opal&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
     })
 
     it('node convention', function() {
