@@ -1,4 +1,5 @@
 Gemfile.lock
+gemfiles/*.lock
 
 # Logs
 logs
@@ -33,3 +34,6 @@ vendor/opal-compiler.js
 test/fixtures/*.backup
 /tmp
 /test-results.xml
+
+# packed NPM packages
+/*.tgz

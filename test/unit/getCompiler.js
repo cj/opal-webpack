@@ -20,6 +20,26 @@ describe('compiler', function(){
     expect(result).to.include('self.$puts("Howdy " + ($rb_plus(1, 2)))')
   })
 
+  it('handles syntax errors', function(done) {
+    // was having problems with chai expect throw assertions
+    let error = null
+    try {
+      doCompile('foo', 'def problem')
+    }
+    catch (e) {
+      error = e
+    }
+    if (error) {
+      if (error.name === 'SyntaxError' && /An error occurred while compiling: foo[\S\s]*false/.test(error.message)) {
+        return done()
+      }
+      else {
+        return done(new Error(`Unexpected error ${error}`))
+      }
+    }
+    return done(new Error('expected error, got none'))
+  })
+
   it('passes on compiler options', function() {
     var result = doCompile('foo', 'def abc(hi); end;', {arity_check: true})
 

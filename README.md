@@ -7,13 +7,18 @@ Check out [this blog post](https://medium.com/@zetachang/from-sprockets-to-webpa
 
 [![npm version](https://img.shields.io/npm/v/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
 [![npm downloads](https://img.shields.io/npm/dt/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
-[![Circle CI](https://circleci.com/gh/cj/opal-webpack.svg?style=svg)](https://circleci.com/gh/cj/opal-webpack)
+[![Quality](http://img.shields.io/codeclimate/github/cj/opal-webpack.svg?style=flat-square)](https://codeclimate.com/github/cj/opal-webpack)
+[![Build Status](http://img.shields.io/travis/cj/opal-webpack/master.svg?style=flat)](http://travis-ci.org/cj/opal-webpack)
 
 ## Installation
 
 ```bash
-npm install opalrb-loader --save-dev
+npm install opal-webpack --save-dev
 ```
+## Requirements
+
+* Node/Webpack obviously
+* Opal 0.9.2 or 0.10 (see below for information on this)
 
 ## Usage
 
@@ -51,11 +56,57 @@ module: {
 }
 ```
 
+#### Stubs
+
+To tell the Opal compiler to stub out certain dependencies, do this
+
+```js
+{
+  module: {
+    loaders: [
+      {
+        test: /\.rb?$/,
+        loader: 'opalrb-loader'
+      }
+    ]
+  },
+  opal: {
+    stubs: ['dependency']
+  }
+}
+```
+
+#### Caching
+
+Just like the Babel loader, you can cache compilation results on the filesystem to improve load times
+between invocations of webpack.
+
+```js
+{
+  module: {
+    loaders: [
+      {
+        test: /\.rb?$/,
+        loader: 'opalrb-loader'
+      }
+    ]
+  },
+  opal: {
+    cacheDirectory: './tmp/cache'
+  }
+}
+```
+
+#### Opal version
+
+When you `require 'opal'` in any asset, this loader will use the version of Opal bundled with this tool.
+opal/mini, opal/full are not supported. Currently Opal 0.9.2 is bundled with the tool. Unlike previous versions,
+it's all or none. You cannot (and should not given rapid Opal development) mix a compiler version with a different
+runtime.
+
 #### OPAL_LOAD_PATH
 
 By passing `OPAL_LOAD_PATH` environment variable to webpack, the loader will correctly resolve file other than relative path.
-
-`opalrb-loader` is only bundled with compiler module. It left the decision on managing runtime, corelib or gems to developer.
 
 See the example [Rakefile](https://github.com/cj/opal-webpack/blob/master/examples/complex/Rakefile) for how to integrate using other Opal gems.
 

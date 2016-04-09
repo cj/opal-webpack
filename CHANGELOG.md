@@ -1,9 +1,9 @@
 MASTER:
 
+* By default, require 'opal' includes bundled opal in this package, you are discouraged from mixing this compiler with your own runtime
 * File caching between runs
 * Supports passing stubs in via global options
 * Avoid absolute path in opal module names (e.g. `Opal.modules['/root/something']`)
-* Use opal semantics when dealing with requires (no `require('./something') anymore`)
 * Make load path more explicit to behave more like Opal does (either load path is current directory and everything must be in there or the load path must be defined)
 * Test pure JS require (using similar semantics to Opal)
 * require_relative works properly

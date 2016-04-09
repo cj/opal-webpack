@@ -9,13 +9,19 @@ const path = require('path')
 const webpack = require('webpack')
 const execSync = require('child_process').execSync
 const fsExtra = require('fs-extra')
+const Opal = require('../../lib/opal')
+const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
+const exec = require('child_process').exec
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 }
 
 describe('integration', function(){
-  const outputBaseDir = path.resolve(__dirname, '../../tmp/output')
+  this.timeout(10000)
+
+  const tmpDir = path.resolve(__dirname, '../../tmp')
+  const outputBaseDir = path.resolve(tmpDir, 'output')
   const cacheDir = path.join(outputBaseDir, 'cache')
   const fixturesDir = path.resolve(__dirname, '../fixtures')
   const currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
@@ -53,7 +59,7 @@ describe('integration', function(){
           expect(err).to.be.null
           expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('123\n')
+          expect(runCode()).to.eq('123\n\n')
 
           return done()
         })
@@ -61,14 +67,19 @@ describe('integration', function(){
     })
   }
 
-  beforeEach(function() {
-    fsExtra.mkdirpSync('./tmp')
-    execSync('ls ./tmp/opal.js 1>/dev/null 2>&1 || bundle exec opal -c -e "require \'opal\'" > ./tmp/opal.js')
+  beforeEach(function(done) {
+    fsExtra.mkdirp('./tmp', done)
   })
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`node -r ./tmp/opal.js ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    return execSync(`phantomjs ${path.resolve(__dirname, '../support/runPhantom.js')} ${args} ${path.resolve(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+  }
+
+  // the source-map-support plugin that load_source_maps.js loads makes it easy to test this on node
+  function runSourceMapDependentCode() {
+    const sourceMapFinder = aFixture('load_source_maps.js')
+    return execSync(`node -r ${sourceMapFinder} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -91,6 +102,19 @@ describe('integration', function(){
     assertBasic(config, done)
   })
 
+  // not an end to end test, but since it's a bit slower, put here instead of unit test
+  it('matches our bundler test version', function(done) {
+    this.timeout(5000) // time for shell execute
+
+    const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
+
+    exec('opal -e "puts RUBY_ENGINE_VERSION"', function(err, stdout) {
+      if (err) { done(err) }
+      expect(stdout.trim()).to.eq(opalVersion)
+      return done()
+    })
+  })
+
   it('loads requires', function (done){
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_another_dep.js')
@@ -109,7 +133,7 @@ describe('integration', function(){
           expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('123\nwe made it\n')
+          expect(runCode()).to.eq('123\n\nwe made it\n\n')
 
           return done()
         })
@@ -135,7 +159,7 @@ describe('integration', function(){
           expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('123\nwe made it\n')
+          expect(runCode()).to.eq('123\n\nwe made it\n\n')
 
           return done()
         })
@@ -164,7 +188,7 @@ describe('integration', function(){
           expect(subject).to.not.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('we made it\n')
+          expect(runCode()).to.eq('we made it\n\n')
 
           return done()
         })
@@ -197,7 +221,7 @@ describe('integration', function(){
           expect(subject).to.include('Opal.modules["dependency"]')
           expect(subject).to.include('Opal.modules["another_dependency"]')
           expect(subject).to.include('Opal.modules["inside_load_path"]')
-          expect(runCode()).to.eq('we made it\n')
+          expect(runCode()).to.eq('we made it\n\n')
 
           return done()
         })
@@ -282,7 +306,7 @@ describe('integration', function(){
           // don't want paths hard coded to machines in here
           expect(subject).to.not.match(currentDirectoryExp)
           expect(subject).to.include('Opal.modules["tree/file1"]')
-          expect(runCode()).to.eq('inside the tree\n')
+          expect(runCode()).to.eq('inside the tree\n\n')
 
           return done()
         })
@@ -291,8 +315,6 @@ describe('integration', function(){
   })
 
   it('outputs correct source maps', function (done) {
-    this.timeout(10000)
-
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_source_maps.js'),
       devtool: 'source-map'
@@ -304,7 +326,7 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be.null
         expect(files).to.have.length(2)
-        var output = runCode('-r '+aFixture('load_source_maps.js'))
+        var output = runSourceMapDependentCode()
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
@@ -315,8 +337,6 @@ describe('integration', function(){
   })
 
   it('outputs correct source maps when stubs are used', function (done) {
-    this.timeout(10000)
-
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_source_maps_stubs.js'),
       devtool: 'source-map',
@@ -331,11 +351,11 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be.null
         expect(files).to.have.length(2)
-        var output = runCode('-r '+aFixture('load_source_maps.js'))
+        var output = runSourceMapDependentCode()
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:7:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:11:1\)/)
         return done()
       })
     })
@@ -368,7 +388,7 @@ describe('integration', function(){
 
           expect(err).to.be.null
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.eq('[Object#onearg] wrong number of arguments(0 for 1)\n[Object#two_arg] wrong number of arguments(1 for 2)\n')
+          expect(runCode()).to.eq('[Object#onearg] wrong number of arguments(0 for 1)\n\n[Object#two_arg] wrong number of arguments(1 for 2)\n\n')
 
           return done()
         })
@@ -385,7 +405,14 @@ describe('integration', function(){
       expect(errors).to.have.length(1)
       let error = errors[0]
       expect(error).to.be.an.instanceof(Error)
-      expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
+      if (opalVersion.indexOf('0.9') != -1) {
+        expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
+      }
+      else {
+        // Opal 0.10 regression - https://github.com/opal/opal/pull/1426
+        // and https://github.com/opal/opal/issues/1427
+        expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error/)
+      }
       return done()
     })
   })
@@ -410,7 +437,8 @@ describe('integration', function(){
       assertBasic(config, () => {
         fs.readdir(cacheDir, (err, files) => {
           expect(err).to.be.null
-          expect(files).to.have.length(1)
+          // 1 file + opal
+          expect(files).to.have.length(2)
           return done()
         })
       })
@@ -438,7 +466,8 @@ describe('integration', function(){
 
       fs.readdir(cacheDir, (err, files) => {
         expect(err).to.be.null
-        expect(files).to.have.length(3)
+        // 3 dependencies + opal
+        expect(files).to.have.length(4)
         return done()
       })
     })
@@ -467,7 +496,7 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be.null
         expect(files).to.have.length(2)
-        var output = runCode('-r '+aFixture('load_source_maps.js'))
+        var output = runSourceMapDependentCode()
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)

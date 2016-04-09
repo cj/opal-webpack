@@ -5,21 +5,25 @@ require "pathname"
 
 # MRI implement `begin/end while condition` differently
 # See issue: https://github.com/opal/opal/issues/575
-module SourceMap
-  module VLQ
-    def self.encode(ary)
-      result = []
-      ary.each do |n|
-        vlq = n < 0 ? ((-n) << 1) + 1 : n << 1
-        loop do
-          digit  = vlq & VLQ_BASE_MASK
-          vlq  >>= VLQ_BASE_SHIFT
-          digit |= VLQ_CONTINUATION_BIT if vlq > 0
-          result << BASE64_DIGITS[digit]
-          break unless vlq > 0
+# https://github.com/opal/opal/pull/1426 should fix this
+
+unless SourceMap::VLQ.encode([0]) == 'A'
+  module SourceMap
+    module VLQ
+      def self.encode(ary)
+        result = []
+        ary.each do |n|
+          vlq = n < 0 ? ((-n) << 1) + 1 : n << 1
+          loop do
+            digit  = vlq & VLQ_BASE_MASK
+            vlq  >>= VLQ_BASE_SHIFT
+            digit |= VLQ_CONTINUATION_BIT if vlq > 0
+            result << BASE64_DIGITS[digit]
+            break unless vlq > 0
+          end
         end
+        result.join
       end
-      result.join
     end
   end
 end
@@ -120,6 +124,31 @@ unless regexp_escaped_trailing_ok
 
           return new RegExp(regexp, options);
         }
+      end
+    end
+  end
+end
+
+# https://github.com/opal/opal/pull/1426
+# https://github.com/opal/opal/issues/1427
+begin
+  Opal::Compiler.new('def problem', {}).compile
+rescue Exception => e
+  unless e.is_a?(SyntaxError) && e.message == "An error occurred while compiling: (file)\n\nunexpected 'false'\nSource: (file):1:11
+def problem\n~~~~~~~~~~^"
+    class Opal::Compiler
+      def compile
+        @parser = Parser.new
+
+        @sexp = s(:top, @parser.parse(@source, self.file) || s(:nil))
+        @eof_content = @parser.lexer.eof_content
+
+        @fragments = process(@sexp).flatten
+
+        @result = @fragments.map(&:code).join('')
+      rescue Exception => error
+        message = "An error occurred while compiling: #{self.file}\n#{error.message}"
+        raise error.class, message, error.backtrace
       end
     end
   end

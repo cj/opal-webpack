@@ -1,3 +1,4 @@
+require 'opal'
 require 'arity_2'
 
 def two_arg(arg1, arg2)

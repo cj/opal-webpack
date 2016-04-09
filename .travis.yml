@@ -1,0 +1,29 @@
+language: ruby
+sudo: false
+
+cache:
+  bundler: true
+  directories:
+    - node_modules
+
+matrix:
+  fast_finish: true
+
+  include:
+    - rvm: 2.3.0
+      gemfile: gemfiles/opal_0.9.gemfile
+    - rvm: 2.3.0
+      gemfile: gemfiles/opal_master.gemfile
+
+before_install:
+  - "nvm install"
+  - "nvm use"
+  - "node -v"
+  - "npm install"
+  - "export PATH=`pwd`/node_modules/phantomjs-prebuilt/bin:$PATH"
+  - "phantomjs -v"
+
+script:
+  - "npm run eslint"
+  - "bundle exec npm run prepare"
+  - "bundle exec npm run test"
