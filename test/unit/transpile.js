@@ -38,8 +38,7 @@ describe('transpile', function(){
   })
 
   // simple stub "template"
-  it('allows stubbing opal requires so they can be provided outside webpack', function() {
-  })
+  it('allows stubbing opal requires so they can be provided outside webpack')
 
   // ensure we can get the compiler properly, compile code, and isBundledOpal works right
   it('loads an Opal compiler from a confgurable file', function(done) {
