@@ -108,7 +108,7 @@ describe('integration', function(){
 
     const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 
-    exec('opal -e "puts RUBY_ENGINE_VERSION"', function(err, stdout, stderr) {
+    exec('opal -e "puts RUBY_ENGINE_VERSION"', function(err, stdout) {
       if (err) { done(err) }
       expect(stdout.trim()).to.eq(opalVersion)
       return done()
