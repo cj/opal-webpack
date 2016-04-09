@@ -200,21 +200,18 @@ describe('integration', function(){
   // then the compiler in a separate file
   it('the bundled opal version does not include compilation in the webpack bundle')
 
-  it('allows stubbing Opal requires so they can be provided outside webpack', function() {
-    // should behave like stubbing opal, opal/mini, opal/full, opal/base
-    // separate from compilation
-  })
+  // should behave like stubbing opal, opal/mini, opal/full, opal/base
+  // separate from compilation
+  it('allows stubbing Opal requires so they can be provided outside webpack')
 
-  it('allows using a statically provided Opal distro', function() {
-    // should also stub opal but sub in a configured value instead of vendor/opal-compiler
+// should also stub opal but sub in a configured value instead of vendor/opal-compiler
     // also rename opal-compiler.js to bundled-opal.js
     // should behave like stubbing opal, opal/mini, opal/full, opal/base
-  })
+  it('allows using a statically provided Opal distro')
 
-  it('allows using a bundler provided Opal distro', function() {
-    // should add Opal to the OPAL_LOAD_PATHS environment variable and
+// should add Opal to the OPAL_LOAD_PATHS environment variable and
     // automatically use it
-  })
+  it('allows using a bundler provided Opal distro')
 
   it('allows stub inside require', function(done) {
     const config = assign({}, globalConfig, {
