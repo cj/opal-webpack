@@ -100,7 +100,9 @@ between invocations of webpack.
 #### Opal version
 
 When you `require 'opal'` in any asset, this loader will use the version of Opal bundled with this tool.
-opal/mini, opal/full are not supported. Currently Opal 0.9.2 is bundled with the tool.
+opal/mini, opal/full are not supported. Currently Opal 0.9.2 is bundled with the tool. Unlike previous versions,
+it's all or none. You cannot (and should not given rapid Opal development) mix a compiler version with a different
+runtime.
 
 #### OPAL_LOAD_PATH
 
