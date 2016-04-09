@@ -130,6 +130,7 @@ unless regexp_escaped_trailing_ok
 end
 
 # https://github.com/opal/opal/pull/1426
+# https://github.com/opal/opal/issues/1427
 begin
   Opal::Compiler.new('def problem', {}).compile
 rescue Exception => e
