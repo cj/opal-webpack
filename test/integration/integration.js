@@ -12,6 +12,7 @@ const fsExtra = require('fs-extra')
 const Opal = require('../../lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
+const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -73,13 +74,17 @@ describe('integration', function(){
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`phantomjs ${path.resolve(__dirname, '../support/runPhantom.js')} ${args} ${path.resolve(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    const command = `phantomjs ${path.resolve(__dirname, '../support/runPhantom.js')} ${args} ${path.resolve(outputDir, '0.loader.js')} 2>&1 || true`
+    //console.log(`Running command: ${command}`)
+    return execSync(command).toString()
   }
 
   // the source-map-support plugin that load_source_maps.js loads makes it easy to test this on node
   function runSourceMapDependentCode() {
     const sourceMapFinder = aFixture('load_source_maps.js')
-    return execSync(`node -r ${sourceMapFinder} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    const command = `node -r ${sourceMapFinder} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`
+    //console.log(`Running command: ${command}`)
+    return execSync(command).toString()
   }
 
   beforeEach(function (done) {
@@ -202,7 +207,19 @@ describe('integration', function(){
 
   // should behave like stubbing opal, opal/mini, opal/full, opal/base
   // separate from compilation
-  it('allows stubbing Opal requires so they can be provided outside webpack')
+  it('allows stubbing Opal requires so they can be provided outside webpack', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_basic.js'),
+      opal: {
+        externalOpal: true
+      }
+    })
+    webpack(config, (err, stats) => {
+      expect(runCode(`${opalCompilerFilename}`)).to.eq('123\n\n')
+
+      return done()
+    })
+  })
 
 // should also stub opal but sub in a configured value instead of vendor/opal-compiler
     // also rename opal-compiler.js to bundled-opal.js

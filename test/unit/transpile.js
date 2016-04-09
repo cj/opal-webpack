@@ -4,6 +4,7 @@ const expect = require('chai').expect
 const transpile = require('../../lib/transpile')
 const path = require('path')
 const alternateCompilerTest = require('../support/alternateCompilerTest')
+const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 
 describe('transpile', function(){
   const wpContext = {
@@ -31,7 +32,7 @@ describe('transpile', function(){
   it('passes bundled opal through', function() {
     var result = doTranspile('the code',
                              {},
-                             path.resolve(__dirname, '../../vendor/opal-compiler.js'),
+                             opalCompilerFilename,
                              'opal-compiler.js')
     expect(result).to.eq('process = undefined;\nthe code')
   })
