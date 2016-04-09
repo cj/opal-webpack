@@ -126,6 +126,20 @@ describe('transpile', function(){
       expect(result).to.match(/require\('!!the_loader_path\?file=opal&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
     })
 
+    xit('custom compiler version')
+
+    it('bundled opal/full', function() {
+      var result = doTranspile('require "opal/full"')
+
+      expect(result).to.match(/require\('!!the_loader_path\?file=opal%2Ffull&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+    })
+
+    it('bundled opal/mini', function() {
+      var result = doTranspile('require "opal/mini"')
+
+      expect(result).to.match(/require\('!!the_loader_path\?file=opal%2Fmini&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+    })
+
     it('node convention', function() {
       var result = doTranspile('require "./another_dependency"')
 
