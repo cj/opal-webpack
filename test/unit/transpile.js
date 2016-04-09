@@ -2,7 +2,6 @@
 
 const expect = require('chai').expect
 const transpile = require('../../lib/transpile')
-const path = require('path')
 const alternateCompilerTest = require('../support/alternateCompilerTest')
 const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 
