@@ -410,7 +410,7 @@ describe('integration', function(){
       }
       else {
         // Opal 0.10 regression - https://github.com/opal/opal/pull/1426
-        expect(error.message).to.match(/Module build failed.*false/)
+        expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error/)
       }
       return done()
     })
