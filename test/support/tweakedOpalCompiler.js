@@ -31473,7 +31473,7 @@ Opal.modules["opal/version"] = function(Opal) {
 
     var def = self.$$proto, $scope = self.$$scope;
 
-    Opal.cdecl($scope, 'VERSION', "0.10.0.beta2")
+    Opal.cdecl($scope, 'VERSION', "0.10.0.beta2.webpacktest")
   })($scope.base)
 };
 
