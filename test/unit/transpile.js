@@ -23,7 +23,10 @@ describe('transpile', function(){
   }
 
   function runTestAgainstOtherFile(code, compilerAbsolutePath, callback) {
-    tmp.file(function (err, tmpPath, fd, cleanup) {
+    tmp.file({
+      dir: process.env.TMP
+    },
+    function (err, tmpPath, fd, cleanup) {
       fs.writeFile(tmpPath, code, function (err) {
         if (err) {
           cleanup()
@@ -31,12 +34,13 @@ describe('transpile', function(){
         }
 
         const environment = Object.assign({
-          OPAL_COMPILER_PATH: compilerAbsolutePath
+          OPAL_COMPILER_PATH: compilerAbsolutePath,
+          NODE_PATH: path.resolve(__dirname, '../..') // we'll assume we're at the root level
         }, process.env)
+
         const nodeBinary = path.join(process.env.NVM_BIN, 'node')
         exec(`${nodeBinary} ${tmpPath}`, {
-          env: environment,
-          cwd: path.resolve(__dirname, '../..') // we'll assume we're at the root level
+          env: environment
         },
         function (err, stdout) {
           if (err) {
@@ -86,7 +90,7 @@ describe('transpile', function(){
 
   it('loads an Opal compiler from a configurable file', function(done) {
     const compilerAbsPath = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
-    const code = `var transpile = require('./lib/transpile');\n`+
+    const code = `var transpile = require('lib/transpile');\n`+
     "console.log(transpile('HELLO=123', {filename: '/foo.rb', relativeFileName: 'foo.rb'}, {path: 'the_loader_path'}).code);"
 
     runTestAgainstOtherFile(code, compilerAbsPath, function(err, result) {
@@ -99,7 +103,7 @@ describe('transpile', function(){
   it('passes custom configured Opal through', function(done) {
     const compilerAbsPath = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
     const compilerRelativePath = './test/support/tweakedOpalCompiler.js'
-    const code = `var transpile = require('./lib/transpile');\n`+
+    const code = `var transpile = require('lib/transpile');\n`+
     `const code = transpile('the code', {filename: '${compilerAbsPath}', relativeFilename: '${compilerRelativePath}'}, {path: 'the_loader_path'}).code\n` + 'console.log(code)'
 
     runTestAgainstOtherFile(code, compilerAbsPath, function(err, result) {
