@@ -1,12 +1,9 @@
 'use strict'
 
 const expect = require('chai').expect
-const path = require('path')
-const tmp = require('tmp')
-const fs = require('fs')
-const exec = require('child_process').exec
 
 const getCompiler = require('../../lib/getCompiler')
+const alternateCompilerTest = require('../support/alternateCompilerTest')
 
 describe('compiler', function(){
   function doCompile(relativeFileName, source, options) {
@@ -19,36 +16,13 @@ describe('compiler', function(){
     return compiler.$result()
   }
 
-  it('loads an Opal compiler from a confgurable file', function(done) {
-    const code = `const getCompiler = require('./lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
+  it('loads an Opal compiler from a configurable file', function(done) {
+    const code = `const getCompiler = require('lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
+    alternateCompilerTest.execute(code, function(err, result) {
+      if (err) { return done(err) }
 
-    tmp.file(function (err, tmpPath, fd, cleanup) {
-      fs.writeFile(tmpPath, code, function (err) {
-        if (err) {
-          cleanup()
-          done(err)
-        }
-
-        exec(`node ${tmpPath}`, {
-          env: {
-            OPAL_COMPILER_PATH: path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
-          }
-        },
-        function (err, stdout) {
-          if (err) {
-            cleanup()
-            done(err)
-          }
-
-          try {
-            expect(stdout.trim()).to.eq('0.10.0.beta2.webpacktest')
-            return done()
-          }
-          finally {
-            cleanup()
-          }
-        })
-      })
+      expect(result).to.eq('0.10.0.beta2.webpacktest')
+      return done()
     })
   })
 
