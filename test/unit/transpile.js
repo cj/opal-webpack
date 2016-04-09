@@ -120,24 +120,38 @@ describe('transpile', function(){
       expect(result).to.match(/require\('!!the_loader_path\?file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
     })
 
-    it('bundled opal', function() {
-      var result = doTranspile('require "opal"')
+    context('for compiler js file', function () {
+      context('using bundled redirects requires for', function() {
+        it('opal', function() {
+          var result = doTranspile('require "opal"')
 
-      expect(result).to.match(/require\('!!the_loader_path\?file=opal&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+          expect(result).to.match(/require\('!!the_loader_path\?file=opal&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+        })
+        it('opal/full', function() {
+          var result = doTranspile('require "opal/full"')
+
+          expect(result).to.match(/require\('!!the_loader_path\?file=opal%2Ffull&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+        })
+        it('opal/mini', function() {
+          var result = doTranspile('require "opal/mini"')
+
+          expect(result).to.match(/require\('!!the_loader_path\?file=opal%2Fmini&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+        })
+      })
+
+      context('using custom file redirects requires for', function() {
+        it('opal')
+        it('opal/full')
+        it('opal/mini')
+      })
     })
 
-    xit('custom compiler version')
-
-    it('bundled opal/full', function() {
-      var result = doTranspile('require "opal/full"')
-
-      expect(result).to.match(/require\('!!the_loader_path\?file=opal%2Ffull&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
-    })
-
-    it('bundled opal/mini', function() {
-      var result = doTranspile('require "opal/mini"')
-
-      expect(result).to.match(/require\('!!the_loader_path\?file=opal%2Fmini&requirable=false!.*\/vendor\/opal-compiler.js'\);/)
+    context('for bundler provided opal', function() {
+      describe('does not redirect', function() {
+        it('opal')
+        it('opal/full')
+        it('opal/mini')
+      })
     })
 
     it('node convention', function() {
