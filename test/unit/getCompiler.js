@@ -50,12 +50,6 @@ describe('compiler', function(){
         })
       })
     })
-
-    // var result = doCompile('foo', 'HELLO=123', {
-    //   opalCompiler: path.resolve(__dirname, 'tweakedOpalCompiler.js')
-    // })
-
-    // expect(result).to.eq('foo')
   })
 
   // will need to call bundler and deal with this on the fly
