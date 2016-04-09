@@ -36,7 +36,8 @@ describe('getWebpackRequire', function(){
       sourceMap: 'foo',
       relativeFileName: 'bar',
       stubs: 'bar',
-      yes: 'yes'
+      yes: 'yes',
+      externalOpal: true
     }
 
     var result = getWebpackRequire(context, options, 'some/path', '/the/some/path')
