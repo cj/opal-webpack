@@ -14,6 +14,17 @@ describe('compiler', function(){
     return compiler.$result()
   }
 
+  it('loads an Opal compiler from a configurable file', function() {
+  })
+
+  // will need to call bundler and deal with this on the fly
+  // since we don't want the compiler in the bundled code
+  // we'll probably want to use the same process we do for the build
+  // and stick the "compiled" file somewhere as a cache
+  // could reuse that between the build process and runtime
+  it('can fetch an Opal compiler from Bundler', function() {
+  })
+
   it('raw compiler works', function(){
     var result = doCompile('foo', 'puts "Howdy #{1+2}"')
 

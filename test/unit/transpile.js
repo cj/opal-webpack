@@ -34,6 +34,17 @@ describe('transpile', function(){
     expect(result).to.eq('process = undefined;\nthe code')
   })
 
+  // simple stub "template"
+  it('allows stubbing opal requires so they can be provided outside webpack', function() {
+  })
+
+  // ensure we can get the compiler properly, compile code, and isBundledOpal works right
+  it('allows using a statically provided Opal distro')
+
+  // need to ensure we can get stuff from bundler and use it
+  // might want to require a simple part of opal for the code we send into doTranspile
+  it('can use a Bundler provided version of Opal')
+
   describe('webpack requires', function() {
     it('standard', function() {
       var result = doTranspile('require "another_dependency"')

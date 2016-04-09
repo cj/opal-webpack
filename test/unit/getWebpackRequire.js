@@ -14,6 +14,10 @@ describe('getWebpackRequire', function(){
     expect(result).to.eq('require(\'!!the_loader?file=some%2Fpath&requirable=true!/the/some/path\');')
   })
 
+  it('does not pass on requireable for "opal"')
+  it('does not pass on requireable for "opal/mini"')
+  it('does not pass on requireable for "opal/full"')
+
   it('does not pass everything in the query', function() {
     var options = {
       sourceRoot: 'foo',
