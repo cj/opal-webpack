@@ -35,7 +35,8 @@ describe('transpile', function(){
         }, process.env)
         const nodeBinary = path.join(process.env.NVM_BIN, 'node')
         exec(`${nodeBinary} ${tmpPath}`, {
-          env: environment
+          env: environment,
+          cwd: path.resolve(__dirname, '../..') // we'll assume we're at the root level
         },
         function (err, stdout) {
           if (err) {
