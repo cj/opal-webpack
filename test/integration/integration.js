@@ -11,6 +11,7 @@ const execSync = require('child_process').execSync
 const fsExtra = require('fs-extra')
 const Opal = require('../../lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
+const exec = require('child_process').exec
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -99,6 +100,19 @@ describe('integration', function(){
       entry: aFixture('entry_basic.js')
     })
     assertBasic(config, done)
+  })
+
+  // not an end to end test, but since it's a bit slower, put here instead of unit test
+  it('matches our bundler test version', function(done) {
+    this.timeout(5000) // time for shell execute
+
+    const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
+
+    exec('opal -e "puts RUBY_ENGINE_VERSION"', function(err, stdout, stderr) {
+      if (err) { done(err) }
+      expect(stdout.trim()).to.eq(opalVersion)
+      return done()
+    })
   })
 
   it('loads requires', function (done){
