@@ -14,7 +14,7 @@
     "test_only": "OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
     "prepare": "npm run build_compiler",
     "prepublish": "npm run prepare",
-    "eslint": "eslint index.js lib test --ignore-pattern lib/fs-cache.js --ignore-pattern test/integration/output"
+    "eslint": "eslint index.js lib test --ignore-pattern lib/fs-cache.js --ignore-pattern test/integration/output --ignore-pattern test/support/tweakedOpalCompiler.js"
   },
   "author": "CJ Lazell",
   "contributors": [

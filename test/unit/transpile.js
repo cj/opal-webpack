@@ -84,9 +84,8 @@ describe('transpile', function(){
 
   it('loads an Opal compiler from a configurable file', function(done) {
     const compilerAbsPath = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
-    const compilerRelativePath = './test/support/tweakedOpalCompiler.js'
     const code = `var transpile = require('./lib/transpile');\n`+
-    `console.log(transpile('HELLO=123', {filename: '/foo.rb', relativeFileName: 'foo.rb'}, {path: 'the_loader_path'}).code);`
+    "console.log(transpile('HELLO=123', {filename: '/foo.rb', relativeFileName: 'foo.rb'}, {path: 'the_loader_path'}).code);"
 
     runTestAgainstOtherFile(code, compilerAbsPath, function(err, result) {
       if (err) { return done(err) }
@@ -99,8 +98,7 @@ describe('transpile', function(){
     const compilerAbsPath = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
     const compilerRelativePath = './test/support/tweakedOpalCompiler.js'
     const code = `var transpile = require('./lib/transpile');\n`+
-    `const code = transpile('the code', {filename: '${compilerAbsPath}', relativeFilename: '${compilerRelativePath}'}, {path: 'the_loader_path'}).code\n` +
-    `console.log(code)`
+    `const code = transpile('the code', {filename: '${compilerAbsPath}', relativeFilename: '${compilerRelativePath}'}, {path: 'the_loader_path'}).code\n` + 'console.log(code)'
 
     runTestAgainstOtherFile(code, compilerAbsPath, function(err, result) {
       if (err) { return done(err) }

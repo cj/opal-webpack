@@ -4,7 +4,8 @@ module.exports = {
         "indent": [2, 2],
         "quotes": [
             2,
-            "single"
+            "single",
+            "avoid-escape"
         ],
         "linebreak-style": [
             2,
@@ -23,6 +24,7 @@ module.exports = {
         "phantom": true,
         "Opal": true,
         "describe": true,
+        "context": true,
         "it": true,
         "beforeEach": true,
         "afterEach": true,
