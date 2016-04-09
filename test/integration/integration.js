@@ -215,6 +215,7 @@ describe('integration', function(){
       }
     })
     webpack(config, (err) => {
+      if (err) { return done(err) }
       expect(runCode(`${opalCompilerFilename}`)).to.eq('123\n\n')
 
       return done()
