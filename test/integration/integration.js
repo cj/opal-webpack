@@ -13,6 +13,7 @@ const Opal = require('../../lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
 const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
+const alternateCompilerTest = require('../support/alternateCompilerTest')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -216,16 +217,32 @@ describe('integration', function(){
     })
     webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(runCode(`${opalCompilerFilename}`)).to.eq('123\n\n')
+      expect(runCode(opalCompilerFilename)).to.eq('123\n\n')
 
       return done()
     })
   })
 
-// should also stub opal but sub in a configured value instead of vendor/opal-compiler
-    // also rename opal-compiler.js to bundled-opal.js
-    // should behave like stubbing opal, opal/mini, opal/full, opal/base
-  it('allows using a statically provided Opal distro')
+  it('allows using a statically provided Opal distro', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_static_opal.js')
+    })
+
+    const code = "const webpack = require('webpack');\n" +
+    `const config = ${JSON.stringify(config)};\n` +
+    'config.module.loaders[0].test = /.rb/;\n' + // regex doesn't serialize to JSON well
+    'webpack(config, err => {' +
+    ' if (err) { process.exit(1) }' +
+    ' console.log("made it ok!")'+
+    '})'
+
+    alternateCompilerTest.execute(code, function(err, result) {
+      if (err) { return done(err) }
+      expect(result).to.include('made it ok!')
+      expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')
+      return done()
+    })
+  })
 
 // should add Opal to the OPAL_LOAD_PATHS environment variable and
     // automatically use it

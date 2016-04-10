@@ -16,10 +16,15 @@ function runTestAgainstOtherFile(code, callback) {
         return callback(err)
       }
 
-      const environment = Object.assign({
+      const nodePaths = [
+        path.resolve(__dirname, '../..'), // we'll assume we're at the root level
+        path.resolve(__dirname, '../../node_modules')
+      ]
+
+      const environment = Object.assign(process.env, {
         OPAL_COMPILER_PATH: compilerAbsolutePath,
-        NODE_PATH: path.resolve(__dirname, '../..') // we'll assume we're at the root level
-      }, process.env)
+        NODE_PATH: nodePaths.join(':')
+      })
 
       const nodeBinary = path.join(process.env.NVM_BIN, 'node')
       exec(`${nodeBinary} ${tmpPath}`, {
