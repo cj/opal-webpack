@@ -13,7 +13,7 @@ const Opal = require('../../lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
 const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
-const alternateCompilerTest = require('../support/alternateCompilerTest')
+const runWithCompilerTest = require('../support/runWithCompilerTest')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -232,7 +232,7 @@ describe('integration', function(){
     ' console.log("made it ok!")'+
     '})'
 
-    alternateCompilerTest.execute(code, function(err, result) {
+    runWithCompilerTest.execute(code, function(err, result) {
       if (err) { return done(err) }
       expect(result).to.include('made it ok!')
       expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')

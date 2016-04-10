@@ -3,7 +3,7 @@
 const expect = require('chai').expect
 
 const getCompiler = require('../../lib/getCompiler')
-const alternateCompilerTest = require('../support/alternateCompilerTest')
+const runWithCompilerTest = require('../support/runWithCompilerTest')
 const bundlerCompilerTest = require('../support/bundlerCompilerTest')
 const cleanBundledCompilers = require('../support/cleanBundledCompilers')
 const execSync = require('child_process').execSync
@@ -27,7 +27,7 @@ describe('compiler', function(){
 
   it('loads an Opal compiler from a configurable file', function(done) {
     const code = `const getCompiler = require('lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
-    alternateCompilerTest.execute(code, function(err, result) {
+    runWithCompilerTest.execute(code, function(err, result) {
       if (err) { return done(err) }
 
       expect(result).to.eq('0.10.0.beta2.webpacktest')
