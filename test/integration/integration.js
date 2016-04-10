@@ -202,8 +202,6 @@ describe('integration', function(){
     })
   })
 
-  // should behave like stubbing opal, opal/mini, opal/full, opal/base
-  // separate from compilation
   it('allows stubbing Opal requires so they can be provided outside webpack', function(done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_basic.js'),
