@@ -43,6 +43,7 @@ describe('compiler', function(){
     bundlerCompilerTest.execute(code, function(err, result) {
       if (err) { return done(err) }
 
+      // travis config runs these 2 right now
       if (execSync('opal -v').toString().trim().indexOf('0.9') != -1) {
         expect(result).to.match(/exist. Creating[\S\s]+0.9.2/)
       }
