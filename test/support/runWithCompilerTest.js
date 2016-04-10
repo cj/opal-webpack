@@ -25,7 +25,7 @@ function runTestAgainstOtherFile(code, callback, compilerType) {
         NODE_PATH: nodePaths.join(':')
       })
 
-      if (compilerType === 'absolute') {
+      if (compilerType === 'tweaked') {
         environment.OPAL_COMPILER_PATH = compilerAbsolutePath
       }
       else {

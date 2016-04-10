@@ -237,7 +237,7 @@ describe('integration', function(){
       expect(result).to.include('made it ok!')
       expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')
       return done()
-    }, 'absolute')
+    }, 'tweaked')
   })
 
 // should add Opal to the OPAL_LOAD_PATHS environment variable and
