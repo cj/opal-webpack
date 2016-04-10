@@ -25,6 +25,7 @@ module.exports = function(source) {
     sourceRoot: process.cwd(),
     filename: filename,
     relativeFileName: relativeFileName,
+    // expire cache when this package or Opal changes
     cacheIdentifier: JSON.stringify({
       'opal-loader': pkg.version,
       'opal-compiler': opalVersion,
