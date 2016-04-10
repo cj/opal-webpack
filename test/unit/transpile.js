@@ -201,7 +201,7 @@ describe('transpile', function(){
     it('JS require', function() {
       var result = doTranspile('require "pure_js"')
 
-      expect(result).to.match(/require\('imports!.*test\/fixtures\/pure_js.js'\);/)
+      expect(result).to.match(/require\('.*test\/fixtures\/pure_js.js'\);/)
     })
   })
 

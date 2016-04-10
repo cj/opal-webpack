@@ -14,6 +14,7 @@ const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
 const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 const runWithCompilerTest = require('../support/runWithCompilerTest')
+const bundlerCompilerTest = require('../support/bundlerCompilerTest')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -217,18 +218,22 @@ describe('integration', function(){
     })
   })
 
-  it('allows using a statically provided Opal distro', function(done) {
-    const config = assign({}, globalConfig, {
-      entry: aFixture('entry_static_opal.js')
-    })
-
-    const code = "const webpack = require('webpack');\n" +
+  function codeForSeparateProcessWebpackRun(config) {
+    return "const webpack = require('webpack');\n" +
     `const config = ${JSON.stringify(config)};\n` +
     'config.module.loaders[0].test = /.rb/;\n' + // regex doesn't serialize to JSON well
     'webpack(config, err => {' +
     ' if (err) { process.exit(1) }' +
     ' console.log("made it ok!")'+
     '})'
+  }
+
+  it('allows using a statically provided Opal distro', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_static_opal.js')
+    })
+
+    const code = codeForSeparateProcessWebpackRun(config)
 
     runWithCompilerTest.execute(code, function(err, result) {
       if (err) { return done(err) }
@@ -238,9 +243,22 @@ describe('integration', function(){
     }, 'tweaked')
   })
 
-// should add Opal to the OPAL_LOAD_PATHS environment variable and
-    // automatically use it
-  it('allows using a bundler provided Opal distro')
+  it('allows using a bundler provided Opal distro', function (done) {
+    this.timeout(20000)
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_opal.js')
+    })
+
+    const code = codeForSeparateProcessWebpackRun(config)
+
+    bundlerCompilerTest.execute(code, function(err, result) {
+      if (err) { return done(err) }
+      expect(result).to.include('made it ok!')
+      expect(runCode().trim()).to.eq('howdy')
+      return done()
+    })
+  })
 
   it('allows stub inside require', function(done) {
     const config = assign({}, globalConfig, {
