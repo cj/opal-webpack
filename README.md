@@ -56,6 +56,10 @@ module: {
 }
 ```
 
+#### Requires
+
+With your Ruby/Opal `require` statements, you can either use the Sprockets/Ruby/Opal convention or you can use the node convention of `require './some_file'`, which will be relative to path of the file doing the require. If you do this though, you must consistently require the file that way. A require to 'some_file' will include the module a second time.
+
 #### Stubs
 
 To tell the Opal compiler to stub out certain dependencies, do this
@@ -129,7 +133,7 @@ It's under [Examples](https://github.com/cj/opal-webpack/tree/master/examples) f
 
 * `npm install`
 * `npm run build_compiler` to build compiler
-* `npm start` to compile & watch `index.es6.js`
+* `npm start` to compile & watch `index.js`
 
 ## Contact
 
