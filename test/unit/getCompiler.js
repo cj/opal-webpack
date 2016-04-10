@@ -32,7 +32,7 @@ describe('compiler', function(){
 
       expect(result).to.eq('0.10.0.beta2.webpacktest')
       return done()
-    })
+    }, 'absolute')
   })
 
   it('can fetch an Opal compiler from Bundler', function(done) {
