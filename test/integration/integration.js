@@ -202,10 +202,6 @@ describe('integration', function(){
     })
   })
 
-  // can change the build process to build 2 files, a regular opal build and
-  // then the compiler in a separate file
-  it('the bundled opal version does not include compilation in the webpack bundle')
-
   // should behave like stubbing opal, opal/mini, opal/full, opal/base
   // separate from compilation
   it('allows stubbing Opal requires so they can be provided outside webpack', function(done) {
@@ -241,7 +237,7 @@ describe('integration', function(){
       expect(result).to.include('made it ok!')
       expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')
       return done()
-    })
+    }, 'absolute')
   })
 
 // should add Opal to the OPAL_LOAD_PATHS environment variable and
