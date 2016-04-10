@@ -156,8 +156,23 @@ describe('transpile', function(){
     })
 
     context('for bundler provided opal', function() {
+      function runOpalRequireTest(ruby, expectedMatch, done) {
+        const code = `var transpile = require('lib/transpile');\n`+
+            `console.log(transpile('${ruby}', {filename: '/foo.rb', relativeFileName: 'foo.rb'}, {path: 'the_loader_path'}).code);`
+
+        bundlerCompilerTest.execute(code, function(err, result) {
+          if (err) { return done(err) }
+          expect(result).to.match(expectedMatch)
+          return done()
+        })
+      }
+
       describe('does not redirect', function() {
-        it('opal')
+        it.only('opal', function(done) {
+          runOpalRequireTest('require "opal"',
+            /require\(foobar/,
+            done)
+        })
         it('opal/full')
         it('opal/mini')
       })
