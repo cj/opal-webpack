@@ -20,7 +20,6 @@ describe('transpile', function(){
     return transpile(code, targetOptions, wpContext).code
   }
 
-
   it('compiles an endpoint', function() {
     var result = doTranspile('HELLO=123')
 
