@@ -9,6 +9,8 @@ const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 const bundlerCompilerTest = require('../support/bundlerCompilerTest')
 
 describe('transpile', function(){
+  this.timeout(10000)
+
   const wpContext = {
     path: 'the_loader_path'
   }
@@ -74,8 +76,6 @@ describe('transpile', function(){
   })
 
   it('can use a Bundler provided version of Opal', function (done) {
-    this.timeout(10000)
-
     const code = `var transpile = require('lib/transpile');\n`+
     "console.log(transpile('HELLO=123', {filename: '/foo.rb', relativeFileName: 'foo.rb'}, {path: 'the_loader_path'}).code);"
 

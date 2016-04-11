@@ -9,6 +9,8 @@ const cleanBundledCompilers = require('../support/cleanBundledCompilers')
 const execSync = require('child_process').execSync
 
 describe('compiler', function(){
+  this.timeout(10000)
+
   function doCompile(relativeFileName, source, options) {
     const targetOptions = {
       relativeFileName: relativeFileName
@@ -32,8 +34,6 @@ describe('compiler', function(){
   })
 
   it('can fetch an Opal compiler from Bundler', function(done) {
-    this.timeout(6000)
-
     const code = `const getCompiler = require('lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
 
     bundlerCompilerTest.execute(code, function(err, result) {
