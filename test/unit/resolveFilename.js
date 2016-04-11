@@ -14,16 +14,16 @@ describe('resolveFilename', function(){
     const code = `const resolveFilename = require('lib/resolveFilename')\nconsole.log(JSON.stringify(resolveFilename('${filename}')))`
     bundlerCompilerTest.execute(code, function (err, result) {
       if (err) { return done(err) }
-        try {
-          const withoutMessage = /(Bundle derived.*Creating!\s)?(.*)/.exec(result)[2]
-          const parsed = JSON.parse(withoutMessage)
-          expect(parsed.absolute).to.match(expectedAbsolute)
-          expect(parsed.relative).to.match(expectedRelative)
-          return done()
-        }
-        catch (e) {
-          return done(`Could not parse JSON ${result}`)
-        }
+      try {
+        const withoutMessage = /(Bundle derived.*Creating!\s)?(.*)/.exec(result)[2]
+        const parsed = JSON.parse(withoutMessage)
+        expect(parsed.absolute).to.match(expectedAbsolute)
+        expect(parsed.relative).to.match(expectedRelative)
+        return done()
+      }
+      catch (e) {
+        return done(`Could not parse JSON ${result}`)
+      }
     }, true, envOverrides)
   }
 
