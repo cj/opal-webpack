@@ -21,9 +21,10 @@ function runTestAgainstOtherFile(code, callback, compilerType) {
         path.resolve(__dirname, '../../node_modules')
       ]
 
-      const environment = Object.assign({
+      const environment = Object.assign({}, process.env)
+      Object.assign(environment, {
         NODE_PATH: nodePaths.join(':')
-      }, process.env)
+      })
 
       if (compilerType === 'tweaked') {
         environment.OPAL_COMPILER_PATH = compilerAbsolutePath
