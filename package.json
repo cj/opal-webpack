@@ -11,7 +11,7 @@
   "scripts": {
     "build_compiler": "opal --no-exit -c lib/compiler.rb | uglifyjs > vendor/opal-compiler.js",
     "test": "npm run test_only -- test/unit test/integration",
-    "test_only": "OPAL_USE_BUNDLER=false OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
+    "test_only": "PATH=test/support:$PATH OPAL_USE_BUNDLER=false OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
     "prepare": "npm run build_compiler",
     "prepublish": "npm run prepare",
     "eslint": "eslint index.js lib test --ignore-pattern lib/fs-cache.js --ignore-pattern test/integration/output --ignore-pattern test/support/tweakedOpalCompiler.js"
