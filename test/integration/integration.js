@@ -18,7 +18,7 @@ RegExp.escape = function(s) {
 }
 
 describe('integration', function(){
-  this.timeout(20000)
+  this.timeout(40000)
   beforeEach(cleanScopeAndRequire)
 
   const tmpDir = path.resolve(__dirname, '../../tmp')
@@ -228,6 +228,7 @@ describe('integration', function(){
     if (execSync('opal -v').toString().trim().indexOf('0.10') != -1) {
       // some issues with 0.10 and opal-browser
       this.skip()
+      return done()
     }
 
     process.env.OPAL_MRI_REQUIRES = 'opal-browser'
