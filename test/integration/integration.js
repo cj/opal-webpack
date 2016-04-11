@@ -282,6 +282,11 @@ describe('integration', function(){
   })
 
   it('allows Bundler for dependencies with an external opal', function (done) {
+    if (execSync('opal -v').toString().trim().indexOf('0.10') != -1) {
+      // some issues with 0.10 and opal-browser
+      this.skip()
+    }
+
     this.timeout(20000)
 
     process.env.OPAL_USE_BUNDLER = 'true'
