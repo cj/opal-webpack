@@ -4,5 +4,4 @@ source "https://rubygems.org"
 
 gem "appraisal"
 gem "opal", "~> 0.9.2"
-gem "opal-factory_girl"
-gem "opal-browser", :require => false
+gem "opal-browser"
