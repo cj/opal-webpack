@@ -239,10 +239,10 @@ describe('integration', function(){
     })
   })
 
-  it('allows using a bundler provided Opal distro', function (done) {
+  it('allows using bundler for compilation/dependencies', function (done) {
     process.env.OPAL_USE_BUNDLER = 'true'
 
-    this.timeout(20000)
+    this.timeout(30000)
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_opal.js')
@@ -251,6 +251,26 @@ describe('integration', function(){
     webpack(config, (err) => {
       if (err) { return done(err) }
       expect(runCode().trim()).to.eq('howdy')
+
+      return done()
+    })
+  })
+
+  it('allows Bundler for dependencies with an external opal', function (done) {
+    this.timeout(20000)
+
+    process.env.OPAL_USE_BUNDLER = 'true'
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_opal.js'),
+      opal: {
+        externalOpal: true
+      }
+    })
+
+    webpack(config, (err) => {
+      if (err) { return done(err) }
+      expect(runCode(getOpalCompilerFilename()).trim()).to.eq('0.2.0')
 
       return done()
     })
