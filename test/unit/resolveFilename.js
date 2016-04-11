@@ -5,7 +5,7 @@ const path = require('path')
 
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 
-describe.only('resolveFilename', function(){
+describe('resolveFilename', function(){
   beforeEach(cleanScopeAndRequire)
 
   function resolveFilename(filename) {
