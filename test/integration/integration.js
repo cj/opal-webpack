@@ -256,8 +256,22 @@ describe('integration', function(){
     })
   })
 
-  // might not be working
-  it('allows bundler distro to require "opal"')
+  it('allows using a bundler provided Opal distro with mini', function (done) {
+    process.env.OPAL_USE_BUNDLER = 'true'
+
+    this.timeout(20000)
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_mini.js')
+    })
+
+    webpack(config, (err) => {
+      if (err) { return done(err) }
+      expect(runCode().trim()).to.eq('howdy')
+
+      return done()
+    })
+  })
 
   it('allows stub inside require', function(done) {
     const config = assign({}, globalConfig, {

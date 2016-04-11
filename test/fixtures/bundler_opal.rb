@@ -1,5 +1,3 @@
-require 'opal/base'
-require 'opal/mini'
-require 'corelib/io'
+require 'opal'
 
 puts 'howdy'
