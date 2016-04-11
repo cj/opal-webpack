@@ -1,11 +1,14 @@
 'use strict'
 
 const expect = require('chai').expect
-const getStub = require('../../lib/getStub')
+
+const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 
 describe('getStub', function(){
+  beforeEach(cleanScopeAndRequire)
+
   it('works', function() {
-    var result = getStub('some/path')
+    var result = require('../../lib/getStub')('some/path')
 
     expect(result).to.include('Opal.modules["some/path"]')
   })

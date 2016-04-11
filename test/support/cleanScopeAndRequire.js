@@ -1,6 +1,8 @@
 const path = require('path')
+const glob = require('glob')
+const fs = require('fs')
 
-module.exports = function () {
+module.exports = function (done) {
   // Opal touches these globals
   const opalBridges = [String, Number, Boolean, Date, Array, Error, RegExp, Function]
   opalBridges.forEach(function (bridge) { delete bridge.$$bridge })
@@ -22,6 +24,7 @@ module.exports = function () {
   })
 
   delete require.cache[path.resolve(__dirname, '../../vendor/opal-compiler.js')]
+  delete require.cache[path.resolve(__dirname, 'tweakedOpalCompiler.js')]
 
   const env = process.env
 
@@ -37,4 +40,16 @@ module.exports = function () {
   }
 
   delete env.RAILS_ENV
+
+  const vendorPath = path.resolve(__dirname, '../../vendor')
+
+  glob(path.join(vendorPath, '**/opal-compiler-v*.js'), {}, function(err, files) {
+    if (err) { return done(err) }
+    files.forEach(function(file) {
+      // recreating this messes up mocha watch
+      //fs.unlinkSync(file)
+      delete require.cache[file]
+    })
+    return done()
+  })
 }

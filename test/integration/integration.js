@@ -9,10 +9,7 @@ const path = require('path')
 const webpack = require('webpack')
 const execSync = require('child_process').execSync
 const fsExtra = require('fs-extra')
-const Opal = require('../../lib/opal')
-const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
-const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 const runWithCompilerTest = require('../support/runWithCompilerTest')
 const bundlerCompilerTest = require('../support/bundlerCompilerTest')
 
