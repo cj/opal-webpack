@@ -149,6 +149,8 @@ describe('transpile', function(){
     })
 
     context('for bundler provided opal', function() {
+      this.timeout(10000)
+
       function runOpalRequireTest(ruby) {
         process.env.OPAL_USE_BUNDLER = 'true'
 
