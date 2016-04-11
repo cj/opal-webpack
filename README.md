@@ -80,6 +80,16 @@ module: {
 
 With your Ruby/Opal `require` statements, you can either use the Sprockets/Ruby/Opal convention or you can use the node convention of `require './some_file'`, which will be relative to path of the file doing the require. If you do this though, you **must** consistently require the file that way. A require to 'some_file' will include the module a second time.
 
+### Load path
+
+Currently, the loader does not use webpack's `moduleDirectories` for finding assets that you `require` in Opal.
+
+By default, if you run webpack in a Bundler context (e.g. `bundle exec webpack...`), the loader will issue a `Bundler.require` call and add all the load paths that any Opal GEMS use to the webpack load path. If you use Rails, set the `RAILS_ENV` environment variable before running webpack and the loader will start up that Rails environment and grab the load paths from there.
+
+If you don't use Bundler or wish to supply additional MRI requires, set the `OPAL_MRI_REQUIRES` environment variable to a colon separated list of Ruby `require` clauses. E.g. `OPAL_MRI_REQUIRES=opal-browser:opal-builder`
+
+You can also pass the `OPAL_LOAD_PATH` environment variable to webpack with additional colon separated paths.
+
 ### Stubs
 
 To tell the Opal compiler to stub out certain dependencies, do this
@@ -172,12 +182,6 @@ Then you'll have assets compiled with the version of Opal that you have in your 
 **When to use it:** You like the default setup of this tool but want to hack around and use a different compiler. Not a common use case.
 
 **How:** set the `OPAL_COMPILER_PATH` environment variable to the compiled asset. You'll need to ensure it can do bootstrap compilation (see the `package.json` file for how we build ours).
-
-#### OPAL_LOAD_PATH
-
-By passing `OPAL_LOAD_PATH` environment variable to webpack, the loader will correctly resolve file other than relative path.
-
-See the example [Rakefile](https://github.com/cj/opal-webpack/blob/master/examples/complex/Rakefile) for how to integrate using other Opal gems.
 
 ## Known issues/limitations
 * This loader uses a bootstrapped Opal compiler. This means that a compiled version of the compiler is compiling your code. There may some issues (like [this one](https://github.com/opal/opal/pull/1422)) that are still being addressed in Opal that affect the compiler.
