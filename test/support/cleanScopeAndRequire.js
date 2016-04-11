@@ -24,6 +24,7 @@ module.exports = function (done) {
   })
 
   delete require.cache[path.resolve(__dirname, '../../vendor/opal-compiler.js')]
+  delete require.cache[path.resolve(__dirname, '../../index.js')]
   delete require.cache[path.resolve(__dirname, 'tweakedOpalCompiler.js')]
 
   const env = process.env
