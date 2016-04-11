@@ -31,6 +31,7 @@ module.exports = function (done) {
   // back to original state
   env.OPAL_USE_BUNDLER = 'false'
   delete env.OPAL_COMPILER_PATH
+  delete env.OPAL_MRI_REQUIRES
 
   if (env.BUNDLE_BIN_ORIG) {
     env.BUNDLE_BIN = env.BUNDLE_BIN_ORIG

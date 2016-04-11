@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Mock rails executable
 
@@ -10,4 +10,4 @@ if [ "$RAILS_ENV" != 'foobar' ]
   exit 1
 fi
 
-ruby -e "require 'opal-browser'; puts Opal.paths"
+ruby -e "require 'opal-browser'; ${@:2}"

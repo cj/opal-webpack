@@ -5,7 +5,7 @@ const path = require('path')
 
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 
-describe('resolveFilename', function(){
+describe.only('resolveFilename', function(){
   beforeEach(cleanScopeAndRequire)
 
   function resolveFilename(filename) {
@@ -25,6 +25,24 @@ describe('resolveFilename', function(){
 
     expect(result.absolute).to.match(/gems\/opal-browser-.*\/opal\/opal-browser\.rb/)
     expect(result.relative).to.match(/.*opal-browser.rb/)
+  })
+
+  it('allows additional MRI requires', function() {
+    process.env.OPAL_MRI_REQUIRES = 'opal-browser'
+
+    const result = resolveFilename('opal-browser')
+
+    expect(result.absolute).to.match(/gems\/opal-browser-.*\/opal\/opal-browser\.rb/)
+    expect(result.relative).to.match(/.*opal-browser.rb/)
+  })
+
+  it('allows additional MRI requires with bundler', function() {
+    process.env.OPAL_MRI_REQUIRES = 'opal-builder'
+
+    const result = bundlerResolve('builder')
+
+    expect(result.absolute).to.match(/gems\/opal-builder-.*\/opal\/builder\.rb/)
+    expect(result.relative).to.match(/.*builder.rb/)
   })
 
   it('passes bundled copy of opal through in non bundler mode', function() {
@@ -47,6 +65,16 @@ describe('resolveFilename', function(){
 
     expect(result.absolute).to.match(/gems\/opal-browser-.*\/opal\/opal-browser\.rb/)
     expect(result.relative).to.match(/.*opal-browser.rb/)
+  })
+
+  it('allows additional MRI requires with Rails', function() {
+    process.env.RAILS_ENV = 'foobar'
+    process.env.OPAL_MRI_REQUIRES = 'opal-builder'
+
+    const result = resolveFilename('builder')
+
+    expect(result.absolute).to.match(/gems\/opal-builder-.*\/opal\/builder\.rb/)
+    expect(result.relative).to.match(/.*builder.rb/)
   })
 
   it('resolves a test fixture', function() {
