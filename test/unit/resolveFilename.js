@@ -26,6 +26,13 @@ describe('resolveFilename', function(){
     expect(result.relative).to.eq('../../../../../../host/opal-browser.rb')
   })
 
+  it('passes bundled copy of opal through in non bundler mode', function() {
+    const result = resolveFilename('opal')
+
+    expect(result.absolute).to.eq(path.resolve(__dirname, '../../vendor/opal-compiler.js'))
+    expect(result.relative).to.eq('opal')
+  })
+
   it('Rails hook is listening', function() {
     process.env.RAILS_ENV = 'unexpected_env'
 

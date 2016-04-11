@@ -44,6 +44,7 @@
     "chai": "^3.5.0",
     "eslint": "^2.7.0",
     "fs-extra": "^0.26.7",
+    "glob": "^5.0.15",
     "mocha": "^2.4.5",
     "object-assign": "^4.0.1",
     "phantomjs-prebuilt": "^2.1.7",

@@ -2,11 +2,8 @@ const path = require('path')
 
 module.exports = function () {
   // Opal touches these globals
-  delete String.$$bridged
-  delete Number.$$bridged
-  delete Boolean.$$bridged
-  delete Date.$$bridged
-  delete Array.$$bridged
+  const opalBridges = [String, Number, Boolean, Date, Array, Error, RegExp, Function]
+  opalBridges.forEach(function (bridge) { delete bridge.$$bridge })
 
   // fresh requires
   const clean = [
@@ -24,15 +21,20 @@ module.exports = function () {
     delete require.cache[p]
   })
 
-  // back to original state
-  process.env.OPAL_USE_BUNDLER = 'false'
+  delete require.cache[path.resolve(__dirname, '../../vendor/opal-compiler.js')]
 
-  if (process.env.BUNDLE_BIN_ORIG) {
-    process.env.BUNDLE_BIN = process.env.BUNDLE_BIN_ORIG
+  const env = process.env
+
+  // back to original state
+  env.OPAL_USE_BUNDLER = 'false'
+  delete env.OPAL_COMPILER_PATH
+
+  if (env.BUNDLE_BIN_ORIG) {
+    env.BUNDLE_BIN = env.BUNDLE_BIN_ORIG
   }
   else {
-    process.env.BUNDLE_BIN_ORIG = process.env.BUNDLE_BIN
+    env.BUNDLE_BIN_ORIG = env.BUNDLE_BIN
   }
 
-  delete process.env.RAILS_ENV
+  delete env.RAILS_ENV
 }

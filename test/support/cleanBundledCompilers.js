@@ -1,7 +1,17 @@
-const execSync = require('child_process').execSync
 const path = require('path')
+const glob = require('glob')
+const fs = require('fs')
 
-module.exports = function() {
+module.exports = function(done) {
   const vendorPath = path.resolve(__dirname, '../../vendor')
-  execSync(`rm -rf ${vendorPath}/opal-compiler-v*.js`)
+
+  glob(path.join(vendorPath, '**/opal-compiler-v*.js'), {}, function(err, files) {
+    if (err) { return done(err) }
+    files.forEach(function(file) {
+      // recreating this messes up mocha watch
+      //fs.unlinkSync(file)
+      delete require.cache[file]
+    })
+    return done()
+  })
 }

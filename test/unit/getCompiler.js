@@ -1,15 +1,21 @@
 'use strict'
 
 const expect = require('chai').expect
+const path = require('path')
 
-const getCompiler = require('../../lib/getCompiler')
-const runWithCompilerTest = require('../support/runWithCompilerTest')
-const bundlerCompilerTest = require('../support/bundlerCompilerTest')
+const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 const cleanBundledCompilers = require('../support/cleanBundledCompilers')
 const execSync = require('child_process').execSync
 
 describe('compiler', function(){
-  this.timeout(10000)
+  beforeEach(cleanScopeAndRequire)
+  beforeEach(function (done) {
+    cleanBundledCompilers(done)
+  })
+
+  function getCompiler(source, targetOptions) {
+    return require('../../lib/getCompiler')(source, targetOptions)
+  }
 
   function doCompile(relativeFileName, source, options) {
     const targetOptions = {
@@ -21,33 +27,20 @@ describe('compiler', function(){
     return compiler.$result()
   }
 
-  beforeEach(cleanBundledCompilers)
+  it('loads an Opal compiler from a configurable file', function() {
+    process.env.OPAL_COMPILER_PATH = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
 
-  it('loads an Opal compiler from a configurable file', function(done) {
-    const code = `const getCompiler = require('lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
-    runWithCompilerTest.execute(code, function(err, result) {
-      if (err) { return done(err) }
-
-      expect(result).to.eq('0.10.0.beta2.webpacktest')
-      return done()
-    }, 'tweaked')
+    const result = doCompile('foo', 'puts "Howdy #{1+2}"')
+    expect(result).to.include('0.10.0.beta2.webpacktest')
   })
 
-  it('can fetch an Opal compiler from Bundler', function(done) {
-    const code = `const getCompiler = require('lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
+  it('can fetch an Opal compiler from Bundler', function() {
+    this.timeout(6000)
 
-    bundlerCompilerTest.execute(code, function(err, result) {
-      if (err) { return done(err) }
+    process.env.OPAL_USE_BUNDLER = 'true'
 
-      // travis config runs these 2 right now
-      if (execSync('opal -v').toString().trim().indexOf('0.9') != -1) {
-        expect(result).to.match(/exist. Creating[\S\s]+0.9.2/)
-      }
-      else{
-        expect(result).to.match(/exist. Creating[\S\s]+0.10.0.beta2/)
-      }
-      return done()
-    })
+    const result = doCompile('foo', 'puts "Howdy #{1+2}"')
+    expect(result).to.include('0.10.0.beta2')
   })
 
   it('raw compiler works', function(){
