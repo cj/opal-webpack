@@ -25,7 +25,6 @@ describe('compiler', function(){
 
   it('loads an Opal compiler from a configurable file', function() {
     process.env.OPAL_COMPILER_PATH = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
-    console.log('running failing test')
 
     const result = doCompile('foo', 'puts "Howdy #{1+2}"')
     expect(result).to.include('0.10.0.beta2.webpacktest')
