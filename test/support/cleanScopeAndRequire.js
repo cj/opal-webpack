@@ -1,6 +1,5 @@
 const path = require('path')
 const glob = require('glob')
-const fs = require('fs')
 
 module.exports = function (done) {
   // Opal touches these globals
