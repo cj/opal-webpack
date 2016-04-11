@@ -26,5 +26,13 @@ module.exports = function () {
 
   // back to original state
   process.env.OPAL_USE_BUNDLER = 'false'
+
+  if (process.env.BUNDLE_BIN_ORIG) {
+    process.env.BUNDLE_BIN = process.env.BUNDLE_BIN_ORIG
+  }
+  else {
+    process.env.BUNDLE_BIN_ORIG = process.env.BUNDLE_BIN
+  }
+
   delete process.env.RAILS_ENV
 }

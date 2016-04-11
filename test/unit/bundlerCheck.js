@@ -1,33 +1,40 @@
 'use strict'
 
 const expect = require('chai').expect
-const bundlerCompilerTest = require('../support/bundlerCompilerTest')
+const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 
 describe('bundlerCheck', function(){
-  function doCheck(done, expectedResult, omitBundlerSetting, envOverrides, hideBundler) {
-    const code = `const bundlerCheck = require('lib/bundlerCheck')\nconsole.log(bundlerCheck())`
-    bundlerCompilerTest.execute(code, function(err, result) {
-      if (err) { return done(err) }
+  beforeEach(cleanScopeAndRequire)
 
-      expect(result).to.eq(expectedResult)
-      return done()
-    },omitBundlerSetting, envOverrides, hideBundler)
+  function bundlerCheck() {
+    return require('../../lib/bundlerCheck')()
   }
 
-  it('is on if bundler is there with no OPAL_USE_BUNDLER supplied', function (done) {
-    doCheck(done, 'true', true)
+  it('is on if bundler is there with no OPAL_USE_BUNDLER supplied', function () {
+    delete process.env.OPAL_USE_BUNDLER
+    process.env.BUNDLE_BIN = 'foo'
+
+    expect(bundlerCheck()).to.eq(true)
   })
 
-  it('is on if bundler is there with OPAL_USE_BUNDLER supplied as true', function (done) {
-    // bundlerCompilerTest will include the env variable
-    doCheck(done, 'true', false)
+  it('is on if bundler is there with OPAL_USE_BUNDLER supplied as true', function () {
+    process.env.OPAL_USE_BUNDLER = 'true'
+    process.env.BUNDLE_BIN = 'foo'
+
+    expect(bundlerCheck()).to.eq(true)
   })
 
-  it('is off if bundler is there with OPAL_USE_BUNDLER supplied as false', function(done) {
-    doCheck(done, 'false', true, {OPAL_USE_BUNDLER: false})
+  it('is off if bundler is there with OPAL_USE_BUNDLER supplied as false', function() {
+    process.env.OPAL_USE_BUNDLER = 'false'
+    process.env.BUNDLE_BIN = 'foo'
+
+    expect(bundlerCheck()).to.eq(false)
   })
 
-  it('is off if bundler is not there', function (done) {
-    doCheck(done, 'false', true, {}, true)
+  it('is off if bundler is not there', function () {
+    delete process.env.OPAL_USE_BUNDLER
+    delete process.env.BUNDLE_BIN
+
+    expect(bundlerCheck()).to.eq(false)
   })
 })
