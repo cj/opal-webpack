@@ -260,6 +260,8 @@ describe('integration', function(){
     })
   })
 
+  // might not be working
+  it('allows bundler distro to require "opal"')
   it('allows stub inside require', function(done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_nested_stub.js'),
