@@ -5,18 +5,29 @@ const path = require('path')
 
 const resolveFilename = require('../../lib/resolveFilename')
 const bundlerCompilerTest = require('../support/bundlerCompilerTest')
+const cleanBundledCompilers = require('../support/cleanBundledCompilers')
 
 describe('resolveFilename', function(){
+  this.timeout(10000)
+
   function bundlerResolve(done, filename, expectedAbsolute, expectedRelative, envOverrides) {
     const code = `const resolveFilename = require('lib/resolveFilename')\nconsole.log(JSON.stringify(resolveFilename('${filename}')))`
     bundlerCompilerTest.execute(code, function (err, result) {
       if (err) { return done(err) }
-      const parsed = JSON.parse(result)
-      expect(parsed.absolute).to.match(expectedAbsolute)
-      expect(parsed.relative).to.match(expectedRelative)
-      return done()
+        try {
+          const withoutMessage = /(Bundle derived.*Creating!\s)?(.*)/.exec(result)[2]
+          const parsed = JSON.parse(withoutMessage)
+          expect(parsed.absolute).to.match(expectedAbsolute)
+          expect(parsed.relative).to.match(expectedRelative)
+          return done()
+        }
+        catch (e) {
+          return done(`Could not parse JSON ${result}`)
+        }
     }, true, envOverrides)
   }
+
+  beforeEach(cleanBundledCompilers)
 
   it('resolves a test fixture', function() {
     const result = resolveFilename('arity_1')
