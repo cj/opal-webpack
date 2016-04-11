@@ -240,6 +240,11 @@ describe('integration', function(){
   })
 
   it('allows using bundler for compilation/dependencies', function (done) {
+    if (execSync('opal -v').toString().trim().indexOf('0.10') != -1) {
+      // some issues with 0.10 and opal-browser
+      this.skip()
+    }
+
     process.env.OPAL_USE_BUNDLER = 'true'
 
     this.timeout(60000)
@@ -498,6 +503,7 @@ describe('integration', function(){
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_error.js')
     })
+
     webpack(config, (err, stats) => {
       let errors = stats.compilation.errors
       expect(errors).to.have.length(1)
