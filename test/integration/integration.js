@@ -250,7 +250,7 @@ describe('integration', function(){
 
     webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(runCode().trim()).to.eq('howdy')
+      expect(runCode().trim()).to.eq('0.2.0')
 
       return done()
     })
