@@ -224,6 +224,26 @@ describe('integration', function(){
     })
   })
 
+  it('specific MRI require', function(done) {
+    if (execSync('opal -v').toString().trim().indexOf('0.10') != -1) {
+      // some issues with 0.10 and opal-browser
+      this.skip()
+    }
+
+    process.env.OPAL_MRI_REQUIRES = 'opal-browser'
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_opal.js')
+    })
+
+    webpack(config, (err) => {
+      if (err) { return done(err) }
+      expect(runCode().trim()).to.eq('0.2.0')
+
+      return done()
+    })
+  })
+
   it('allows using a statically provided Opal distro', function(done) {
     useTweakedCompiler()
 
