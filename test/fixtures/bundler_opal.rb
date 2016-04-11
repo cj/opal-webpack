@@ -1,5 +1,4 @@
-require 'opal/base'
-require 'opal/mini'
-require 'corelib/io'
+require 'opal'
+require 'opal-browser'
 
-puts 'howdy'
+puts Browser::VERSION
