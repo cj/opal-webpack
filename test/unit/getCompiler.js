@@ -31,7 +31,7 @@ describe('compiler', function(){
   })
 
   it('can fetch an Opal compiler from Bundler', function() {
-    this.timeout(6000)
+    this.timeout(12000)
 
     process.env.OPAL_USE_BUNDLER = 'true'
 
@@ -51,6 +51,7 @@ describe('compiler', function(){
   })
 
   it('handles syntax errors', function(done) {
+    const opal09 = execSync('opal -v').toString().trim().indexOf('0.9') != -1
     // was having problems with chai expect throw assertions
     let error = null
     try {
@@ -60,7 +61,10 @@ describe('compiler', function(){
       error = e
     }
     if (error) {
-      if (error.name === 'SyntaxError' && /An error occurred while compiling: foo[\S\s]*false/.test(error.message)) {
+      if (opal09 && error.name === 'SyntaxError' && /An error occurred while compiling: foo[\S\s]*false/.test(error.message)) {
+        return done()
+      }
+      else if (error.name === 'RuntimeError' && /An error occurred while compiling: foo[\S\s]+Source: foo:1:11/.test(error.message)) {
         return done()
       }
       else {
