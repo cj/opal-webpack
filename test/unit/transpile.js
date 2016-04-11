@@ -13,11 +13,6 @@ describe('transpile', function(){
     path: 'the_loader_path'
   }
 
-  afterEach(function() {
-    // was causing some state issues between tests
-    delete process.env.OPAL_USE_BUNDLER
-  })
-
   function doTranspile(code, options, filename, relativeFileName) {
     const targetOptions = {
       sourceRoot: process.cwd(),

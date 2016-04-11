@@ -19,10 +19,10 @@ function runTestAgainstOtherFile(code, callback) {
         path.resolve(__dirname, '../../node_modules')
       ]
 
-      const environment = Object.assign(process.env, {
+      const environment = Object.assign({
         OPAL_USE_BUNDLER: true,
         NODE_PATH: nodePaths.join(':')
-      })
+      },process.env)
 
       const nodeBinary = path.join(process.env.NVM_BIN, 'node')
       exec(`${nodeBinary} ${tmpPath}`, {

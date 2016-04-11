@@ -20,10 +20,6 @@ describe('compiler', function(){
   }
 
   beforeEach(cleanBundledCompilers)
-  afterEach(function() {
-    // was causing some state issues between tests
-    delete process.env.OPAL_USE_BUNDLER
-  })
 
   it('loads an Opal compiler from a configurable file', function(done) {
     const code = `const getCompiler = require('lib/opal')\nconsole.log(Opal.get('RUBY_ENGINE_VERSION'))`
