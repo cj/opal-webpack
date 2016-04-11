@@ -14,7 +14,7 @@
     "test_only": "OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
     "prepare": "npm run build_compiler",
     "prepublish": "npm run prepare",
-    "eslint": "eslint index.js lib test --ignore-pattern lib/fs-cache.js --ignore-pattern test/integration/output"
+    "eslint": "eslint index.js lib test --ignore-pattern lib/fs-cache.js --ignore-pattern test/integration/output --ignore-pattern test/support/tweakedOpalCompiler.js"
   },
   "author": "CJ Lazell",
   "contributors": [
@@ -49,6 +49,7 @@
     "phantomjs-prebuilt": "^2.1.7",
     "rimraf": "^2.5.2",
     "source-map-support": "^0.4.0",
+    "tmp": "0.0.28",
     "uglifyjs": "^2.4.1",
     "webpack": "^1.12.14"
   }

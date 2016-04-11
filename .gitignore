@@ -28,7 +28,7 @@ node_modules
 **/bundle.js.map
 
 # Built files
-vendor/opal-compiler.js
+vendor/*.js
 
 # test files
 test/fixtures/*.backup
