@@ -1,4 +1,6 @@
 # opalrb-loader
+
+[![Join the chat at https://gitter.im/cj/opal-webpack](https://badges.gitter.im/cj/opal-webpack.svg)](https://gitter.im/cj/opal-webpack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 > Opal is a compiler for writing JavaScript in Ruby.
 
 This package allows transpiling Ruby files using [Opal](http://opalrb.org) and [webpack](https://github.com/webpack/webpack).
